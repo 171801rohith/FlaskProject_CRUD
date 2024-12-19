@@ -1,0 +1,19 @@
+{% extends "layout.html" %} {% block content%}
+<div class="crudOps">
+  <form action="/create" method="POST">
+    <button type="submit">CREATE REVIEW</button>
+  </form>
+  <form action="/read" method="POST">
+    <button type="submit">READ REVIEW</button>
+  </form>
+  <form action="/update" method="POST">
+    <button type="submit">UPDATE REVIEW</button>
+  </form>
+  <form action="/delete" method="POST">
+    <button type="submit">DELETE REVIEW</button>
+  </form>
+  <form action="/">
+    <button type="submit">LOGOUT</button>
+  </form>
+</div>
+{% endblock content%}

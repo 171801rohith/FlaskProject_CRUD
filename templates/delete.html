@@ -1,0 +1,41 @@
+{% extends "layout.html" %} {% block content%}
+<div class="deleter">
+  <table>
+    <tr>
+      <th></th>
+      <th></th>
+    </tr>
+    <tr>
+      <td>USER ID</td>
+      <td class="Pad">:</td>
+      <td>{{UserID}}</td>
+    </tr>
+    <tr>
+      <td>NAME</td>
+      <td class="Pad">:</td>
+      <td>{{Name}}</td>
+    </tr>
+    <tr>
+      <td>EMAIL ID</td>
+      <td class="Pad">:</td>
+      <td>{{EmailID}}</td>
+    </tr>
+    <tr>
+      <td>REVIEW</td>
+      <td class="Pad">:</td>
+      <td>{{Review}}</td>
+    </tr>
+    <tr>
+      <td>RATINGS</td>
+      <td class="Pad">:</td>
+      <td>{{Ratings}}</td>
+    </tr>
+  </table>
+  <br />
+  <h3>The Above Review Has been Deleted From ReviewDB</h3>
+
+  <form action="/back">
+    <button type="submit">BACK</button>
+  </form>
+</div>
+{% endblock content%}

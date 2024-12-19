@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flask CRUD Project</title>
+  </head>
+  <body>
+    <nav id="navigationBar">
+      <ul>
+        <li><a href="/">HOME</a></li>
+        <li><a href="/ABOUT">ABOUT</a></li>
+      </ul>
+    </nav>
+    {% block content%}
+    <div class="main">
+      <form action="/login" method="POST">
+        <label for="email">Email ID :</label>
+        <input type="text" id="email" name="email" required />
+        <br />
+        <br />
+
+        <label for="password">Password :</label>
+        <input type="password" id="password" name="password" required />
+        <br />
+        <br />
+
+        <button type="submit">LOGIN</button>
+      </form>
+
+      <form action="/signup" method="POST">
+        <button type="submit">SIGNUP</button>
+      </form>
+    </div>
+    {% endblock content%} {% with messages = get_flashed_messages() %} {% if
+    messages %}
+    <script>
+      alert("{{ messages[0] }}");
+    </script>
+    {% endif %} {% endwith %}
+  </body>
+</html>
