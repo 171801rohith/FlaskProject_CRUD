@@ -4,6 +4,7 @@ from app import app, mongodb
 
 from WTForms.loginForm import LoginForm, SignUpButton
 from WTForms.crudForm import CRUDForm
+from WTForms.createReviewForm import CreateReviewForm
 
 
 class FlaskMongo:
@@ -33,7 +34,7 @@ class FlaskMongo:
     @app.route("/create", methods=["POST", "GET"])
     def createHTML():
         if "emailID" in session:
-            return render_template("create.html")
+            return render_template("create.html", createReviewForm=CreateReviewForm())
         else:
             return redirect(url_for("index"))
 
@@ -45,13 +46,13 @@ class FlaskMongo:
                 return render_template("update.html")
             else:
                 flash("You have not reviewed the course yet. ")
-                return render_template("crud.html", crudForm = CRUDForm())
+                return render_template("crud.html", crudForm=CRUDForm())
         else:
             return redirect(url_for("index"))
 
     @app.route("/back")
     def curdHTML():
-        return render_template("crud.html", crudForm = CRUDForm())
+        return render_template("crud.html", crudForm=CRUDForm())
 
     @app.route("/logout", methods=["POST"])
     def log_out():
@@ -97,7 +98,7 @@ class FlaskMongo:
                     session.permanent = True
                     session["emailID"] = email
 
-                    return render_template("crud.html", crudForm = CRUDForm())
+                    return render_template("crud.html", crudForm=CRUDForm())
                 else:
                     flash("Invalid Password. Please try again.")
                     return redirect(url_for("index"))
@@ -114,22 +115,26 @@ class FlaskMongo:
                 userRev = mongodb.ReviewDB.find_one({"EmailID": session.get("emailID")})
                 if userRev:
                     flash("You have already submitted a review.")
-                    return render_template("crud.html", crudForm = CRUDForm())
+                    return render_template("crud.html", crudForm=CRUDForm())
                 else:
-                    review = request.form["review"]
-                    ratings = request.form["ratings"]
-                    mongodb.ReviewDB.insert_one(
-                        {
-                            "UserID": user["UserID"],
-                            "Name": user["Name"],
-                            "EmailID": user["EmailID"],
-                            "Review": review,
-                            "Ratings": ratings,
-                        }
-                    )
+                    createReviewForm = CreateReviewForm() 
+                    if createReviewForm.validate_on_submit:
+                        review = createReviewForm.review.data
+                        ratings = createReviewForm.ratings.data
+                        createReviewForm.review.data = ''
+                        createReviewForm.ratings.data = ''
+                        mongodb.ReviewDB.insert_one(
+                            {
+                                "UserID": user["UserID"],
+                                "Name": user["Name"],
+                                "EmailID": user["EmailID"],
+                                "Review": review,
+                                "Ratings": ratings,
+                            }
+                        )
                 flash(f"Review Added Successfully. Your ratings {ratings}.")
 
-            return render_template("crud.html", crudForm = CRUDForm())
+            return render_template("crud.html", crudForm=CRUDForm())
         else:
             return redirect(url_for("index"))
 
@@ -153,7 +158,7 @@ class FlaskMongo:
                 )
             else:
                 flash("You have not reviewed the course yet. ")
-            return render_template("crud.html", crudForm = CRUDForm())
+            return render_template("crud.html", crudForm=CRUDForm())
         else:
             return redirect(url_for("index"))
 
@@ -178,7 +183,7 @@ class FlaskMongo:
                 )
             else:
                 flash("You have not reviewed the course yet. ")
-            return render_template("crud.html", crudForm = CRUDForm())
+            return render_template("crud.html", crudForm=CRUDForm())
         else:
             return redirect(url_for("index"))
 
@@ -205,6 +210,6 @@ class FlaskMongo:
             else:
                 flash("You have not reviewed the course yet. ")
 
-            return render_template("crud.html", crudForm = CRUDForm())
+            return render_template("crud.html", crudForm=CRUDForm())
         else:
             return redirect(url_for("index"))

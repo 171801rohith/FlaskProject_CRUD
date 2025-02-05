@@ -1,13 +1,14 @@
 {% extends "layout.html" %} {% block content%}
 <form action="/createReview" method="POST">
-  <label for="review">Review :</label>
-  <input type="text" , id="review" , name="review" required />
+  {{createReviewForm.hidden_tag()}}
+  {{createReviewForm.review.label}}
+  {{createReviewForm.review}}
   <br />
   <br />
-  <label for="ratings">Ratings:</label>
-  <input type="number" id="ratings" name="ratings" min="1" max="10" required />
+  {{createReviewForm.ratings.label}}
+  {{createReviewForm.ratings}}
   <br />
   <br />
-  <button type="submit">SUBMIT</button>
+  {{createReviewForm.submit}}
 </form>
 {% endblock content%}
