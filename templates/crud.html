@@ -1,19 +1,28 @@
 {% extends "layout.html" %} {% block content%}
 <div class="crudOps">
   <form action="/create" method="POST">
-    <button type="submit">CREATE REVIEW</button>
+    {{crudForm.hidden_tag()}}
+    {{crudForm.createReview}}
   </form>
+  
   <form action="/read" method="POST">
-    <button type="submit">READ REVIEW</button>
+    {{crudForm.hidden_tag()}}
+    {{crudForm.readReview}}
   </form>
+  
   <form action="/update" method="POST">
-    <button type="submit">UPDATE REVIEW</button>
+    {{crudForm.hidden_tag()}}
+    {{crudForm.updateReview}}
   </form>
+
   <form action="/delete" method="POST">
-    <button type="submit">DELETE REVIEW</button>
+    {{crudForm.hidden_tag()}}
+    {{crudForm.deleteReview}}
   </form>
+  
   <form action="/logout" method="POST">
-    <button type="submit">LOGOUT</button>
+    {{crudForm.hidden_tag()}}
+    {{crudForm.logout}}
   </form>
 </div>
 {% endblock content%}

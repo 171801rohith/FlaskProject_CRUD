@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app import app, mongodb
 
 from WTForms.loginForm import LoginForm, SignUpButton
+from WTForms.crudForm import CRUDForm
 
 
 class FlaskMongo:
@@ -21,10 +22,8 @@ class FlaskMongo:
 
     @app.route("/")
     def index():
-        loginForm = LoginForm()
-        signUpButton = SignUpButton()
         return render_template(
-            "layout.html", loginForm=loginForm, signUpButton=signUpButton
+            "layout.html", loginForm=LoginForm(), signUpButton=SignUpButton()
         )
 
     @app.route("/signup", methods=["POST"])
@@ -46,13 +45,13 @@ class FlaskMongo:
                 return render_template("update.html")
             else:
                 flash("You have not reviewed the course yet. ")
-                return render_template("crud.html")
+                return render_template("crud.html", crudForm = CRUDForm())
         else:
             return redirect(url_for("index"))
 
     @app.route("/back")
     def curdHTML():
-        return render_template("crud.html")
+        return render_template("crud.html", crudForm = CRUDForm())
 
     @app.route("/logout", methods=["POST"])
     def log_out():
@@ -90,14 +89,15 @@ class FlaskMongo:
         if loginForm.validate_on_submit:
             email = loginForm.emailID.data
             password = loginForm.password.data
-            loginForm.emailID.data = ''
-            loginForm.password.data = ''
+            loginForm.emailID.data = ""
+            loginForm.password.data = ""
             user = mongodb.UserDB.find_one({"EmailID": email})
             if user:
                 if check_password_hash(user["Password"], password):
                     session.permanent = True
                     session["emailID"] = email
-                    return render_template("crud.html")
+
+                    return render_template("crud.html", crudForm = CRUDForm())
                 else:
                     flash("Invalid Password. Please try again.")
                     return redirect(url_for("index"))
@@ -114,7 +114,7 @@ class FlaskMongo:
                 userRev = mongodb.ReviewDB.find_one({"EmailID": session.get("emailID")})
                 if userRev:
                     flash("You have already submitted a review.")
-                    return render_template("crud.html")
+                    return render_template("crud.html", crudForm = CRUDForm())
                 else:
                     review = request.form["review"]
                     ratings = request.form["ratings"]
@@ -129,7 +129,7 @@ class FlaskMongo:
                     )
                 flash(f"Review Added Successfully. Your ratings {ratings}.")
 
-            return render_template("crud.html")
+            return render_template("crud.html", crudForm = CRUDForm())
         else:
             return redirect(url_for("index"))
 
@@ -153,7 +153,7 @@ class FlaskMongo:
                 )
             else:
                 flash("You have not reviewed the course yet. ")
-            return render_template("crud.html")
+            return render_template("crud.html", crudForm = CRUDForm())
         else:
             return redirect(url_for("index"))
 
@@ -178,7 +178,7 @@ class FlaskMongo:
                 )
             else:
                 flash("You have not reviewed the course yet. ")
-            return render_template("crud.html")
+            return render_template("crud.html", crudForm = CRUDForm())
         else:
             return redirect(url_for("index"))
 
@@ -205,6 +205,6 @@ class FlaskMongo:
             else:
                 flash("You have not reviewed the course yet. ")
 
-            return render_template("crud.html")
+            return render_template("crud.html", crudForm = CRUDForm())
         else:
             return redirect(url_for("index"))
