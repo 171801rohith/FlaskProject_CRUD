@@ -6,6 +6,7 @@ from WTForms.loginForm import LoginForm, SignUpButton
 from WTForms.crudForm import CRUDForm
 from WTForms.createReviewForm import CreateReviewForm
 from WTForms.updateForm import UpdateForm
+from WTForms.signupForm import SignupForm
 
 
 class FlaskMongo:
@@ -30,7 +31,7 @@ class FlaskMongo:
 
     @app.route("/signup", methods=["POST"])
     def sign_upHTML():
-        return render_template("signup.html")
+        return render_template("signup.html", signupForm=SignupForm())
 
     @app.route("/create", methods=["POST", "GET"])
     def createHTML():
@@ -63,27 +64,32 @@ class FlaskMongo:
 
     @app.route("/signin", methods=["POST"])
     def sign_in():
-        name = request.form["name"]
-        email = request.form["email"]
-        password = generate_password_hash(request.form["password"])
-        userid = FlaskMongo.increment()
+        signupForm = SignupForm()
+        if signupForm.validate_on_submit:
+            name = signupForm.name.data
+            email = signupForm.emailID.data
+            password = generate_password_hash(signupForm.password.data)
+            signupForm.name.data = ""
+            signupForm.emailID.data = ""
+            signupForm.password.data = ""
+            userid = FlaskMongo.increment()
 
-        check = mongodb.UserDB.find_one({"EmailID": email})
-        if check:
-            flash("Email already exists. Please try again.")
+            check = mongodb.UserDB.find_one({"EmailID": email})
+            if check:
+                flash("Email already exists. Please try again.")
+                return redirect(url_for("index"))
+
+            mongodb.UserDB.insert_one(
+                {
+                    "UserID": userid,
+                    "Name": name,
+                    "EmailID": email,
+                    "Password": password,
+                }
+            )
+
+            flash(f"User Added Successfully. Your userID {userid}. Mail ID {email}")
             return redirect(url_for("index"))
-
-        mongodb.UserDB.insert_one(
-            {
-                "UserID": userid,
-                "Name": name,
-                "EmailID": email,
-                "Password": password,
-            }
-        )
-
-        flash(f"User Added Successfully. Your userID {userid}. Mail ID {email}")
-        return redirect(url_for("index"))
 
     @app.route("/login", methods=["POST"])
     def login():
@@ -211,7 +217,9 @@ class FlaskMongo:
                         },
                         upsert=False,
                     )
-                    flash(f"Review Updated Successfully. Your updated ratings {ratings}.")
+                    flash(
+                        f"Review Updated Successfully. Your updated ratings {ratings}."
+                    )
             else:
                 flash("You have not reviewed the course yet. ")
 

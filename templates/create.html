@@ -1,12 +1,10 @@
 {% extends "layout.html" %} {% block content%}
 <form action="/createReview" method="POST">
-  {{createReviewForm.hidden_tag()}}
-  {{createReviewForm.review.label}}
+  {{createReviewForm.hidden_tag()}} {{createReviewForm.review.label}}
   {{createReviewForm.review}}
   <br />
   <br />
-  {{createReviewForm.ratings.label}}
-  {{createReviewForm.ratings}}
+  {{createReviewForm.ratings.label}} {{createReviewForm.ratings}}
   <br />
   <br />
   {{createReviewForm.submit}}

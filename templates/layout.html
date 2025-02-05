@@ -15,14 +15,12 @@
     {% block content%}
     <div class="main">
       <form action="/login" method="POST">
-        {{loginForm.hidden_tag()}}
-        {{loginForm.emailID.label}}
+        {{loginForm.hidden_tag()}} {{loginForm.emailID.label}}
         {{loginForm.emailID}}
         <br />
         <br />
 
-        {{loginForm.password.label}}
-        {{loginForm.password}}
+        {{loginForm.password.label}} {{loginForm.password}}
         <br />
         <br />
 
@@ -30,8 +28,7 @@
       </form>
 
       <form action="/signup" method="POST">
-        {{signUpButton.hidden_tag()}}
-        {{signUpButton.signup}}
+        {{signUpButton.hidden_tag()}} {{signUpButton.signup}}
       </form>
     </div>
     {% endblock content%} {% with messages = get_flashed_messages() %} {% if
