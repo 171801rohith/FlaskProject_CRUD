@@ -5,6 +5,7 @@ from app import app, mongodb
 from WTForms.loginForm import LoginForm, SignUpButton
 from WTForms.crudForm import CRUDForm
 from WTForms.createReviewForm import CreateReviewForm
+from WTForms.updateForm import UpdateForm
 
 
 class FlaskMongo:
@@ -43,7 +44,7 @@ class FlaskMongo:
         if "emailID" in session:
             userRev = mongodb.ReviewDB.find_one({"EmailID": session.get("emailID")})
             if userRev:
-                return render_template("update.html")
+                return render_template("update.html", updateForm=UpdateForm())
             else:
                 flash("You have not reviewed the course yet. ")
                 return render_template("crud.html", crudForm=CRUDForm())
@@ -117,12 +118,12 @@ class FlaskMongo:
                     flash("You have already submitted a review.")
                     return render_template("crud.html", crudForm=CRUDForm())
                 else:
-                    createReviewForm = CreateReviewForm() 
+                    createReviewForm = CreateReviewForm()
                     if createReviewForm.validate_on_submit:
                         review = createReviewForm.review.data
                         ratings = createReviewForm.ratings.data
-                        createReviewForm.review.data = ''
-                        createReviewForm.ratings.data = ''
+                        createReviewForm.review.data = ""
+                        createReviewForm.ratings.data = ""
                         mongodb.ReviewDB.insert_one(
                             {
                                 "UserID": user["UserID"],
@@ -192,21 +193,25 @@ class FlaskMongo:
         if "emailID" in session:
             userRev = mongodb.ReviewDB.find_one({"EmailID": session.get("emailID")})
             if userRev:
-                review = request.form["review"]
-                ratings = request.form["ratings"]
-                mongodb.ReviewDB.update_one(
-                    {"EmailID": userRev["EmailID"]},
-                    {
-                        "$set": {
-                            "UserID": userRev["UserID"],
-                            "Name": userRev["Name"],
-                            "Review": review,
-                            "Ratings": ratings,
-                        }
-                    },
-                    upsert=False,
-                )
-                flash(f"Review Updated Successfully. Your updated ratings {ratings}.")
+                updateForm = UpdateForm()
+                if updateForm.validate_on_submit:
+                    review = updateForm.review.data
+                    ratings = updateForm.ratings.data
+                    updateForm.review.data = ""
+                    updateForm.ratings.data = ""
+                    mongodb.ReviewDB.update_one(
+                        {"EmailID": userRev["EmailID"]},
+                        {
+                            "$set": {
+                                "UserID": userRev["UserID"],
+                                "Name": userRev["Name"],
+                                "Review": review,
+                                "Ratings": ratings,
+                            }
+                        },
+                        upsert=False,
+                    )
+                    flash(f"Review Updated Successfully. Your updated ratings {ratings}.")
             else:
                 flash("You have not reviewed the course yet. ")
 
