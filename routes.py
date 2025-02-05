@@ -2,6 +2,8 @@ from flask import request, redirect, url_for, render_template, flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import app, mongodb
 
+from WTForms.loginForm import LoginForm, SignUpButton
+
 
 class FlaskMongo:
 
@@ -19,7 +21,11 @@ class FlaskMongo:
 
     @app.route("/")
     def index():
-        return render_template("layout.html")
+        loginForm = LoginForm()
+        signUpButton = SignUpButton()
+        return render_template(
+            "layout.html", loginForm=loginForm, signUpButton=signUpButton
+        )
 
     @app.route("/signup", methods=["POST"])
     def sign_upHTML():
@@ -31,7 +37,7 @@ class FlaskMongo:
             return render_template("create.html")
         else:
             return redirect(url_for("index"))
-        
+
     @app.route("/update", methods=["POST", "GET"])
     def updateHTML():
         if "emailID" in session:
@@ -80,20 +86,24 @@ class FlaskMongo:
 
     @app.route("/login", methods=["POST"])
     def login():
-        email = request.form["email"]
-        password = request.form["password"]
-        user = mongodb.UserDB.find_one({"EmailID": email})
-        if user:
-            if check_password_hash(user["Password"], password):
-                session.permanent = True
-                session["emailID"] = email
-                return render_template("crud.html")
+        loginForm = LoginForm()
+        if loginForm.validate_on_submit:
+            email = loginForm.emailID.data
+            password = loginForm.password.data
+            loginForm.emailID.data = ''
+            loginForm.password.data = ''
+            user = mongodb.UserDB.find_one({"EmailID": email})
+            if user:
+                if check_password_hash(user["Password"], password):
+                    session.permanent = True
+                    session["emailID"] = email
+                    return render_template("crud.html")
+                else:
+                    flash("Invalid Password. Please try again.")
+                    return redirect(url_for("index"))
             else:
-                flash("Invalid Password. Please try again.")
+                flash("Email not found. Please Sign Up.")
                 return redirect(url_for("index"))
-        else:
-            flash("Email not found. Please Sign Up.")
-            return redirect(url_for("index"))
 
     @app.route("/createReview", methods=["POST"])
     def create_review():
@@ -144,7 +154,7 @@ class FlaskMongo:
             else:
                 flash("You have not reviewed the course yet. ")
             return render_template("crud.html")
-        else: 
+        else:
             return redirect(url_for("index"))
 
     @app.route("/delete", methods=["POST", "GET"])

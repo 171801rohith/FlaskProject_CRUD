@@ -15,21 +15,23 @@
     {% block content%}
     <div class="main">
       <form action="/login" method="POST">
-        <label for="email">Email ID :</label>
-        <input type="text" id="email" name="email" required />
+        {{loginForm.hidden_tag()}}
+        {{loginForm.emailID.label}}
+        {{loginForm.emailID}}
         <br />
         <br />
 
-        <label for="password">Password :</label>
-        <input type="password" id="password" name="password" required />
+        {{loginForm.password.label}}
+        {{loginForm.password}}
         <br />
         <br />
 
-        <button type="submit">LOGIN</button>
+        {{loginForm.login}}
       </form>
 
       <form action="/signup" method="POST">
-        <button type="submit">SIGNUP</button>
+        {{signUpButton.hidden_tag()}}
+        {{signUpButton.signup}}
       </form>
     </div>
     {% endblock content%} {% with messages = get_flashed_messages() %} {% if
