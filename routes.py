@@ -65,7 +65,7 @@ class FlaskMongo:
     @app.route("/signin", methods=["POST"])
     def sign_in():
         signupForm = SignupForm()
-        if signupForm.validate_on_submit:
+        if signupForm.validate_on_submit():
             name = signupForm.name.data
             email = signupForm.emailID.data
             password = generate_password_hash(signupForm.password.data)
@@ -94,7 +94,7 @@ class FlaskMongo:
     @app.route("/login", methods=["POST"])
     def login():
         loginForm = LoginForm()
-        if loginForm.validate_on_submit:
+        if loginForm.validate_on_submit():
             email = loginForm.emailID.data
             password = loginForm.password.data
             loginForm.emailID.data = ""
@@ -125,7 +125,7 @@ class FlaskMongo:
                     return render_template("crud.html", crudForm=CRUDForm())
                 else:
                     createReviewForm = CreateReviewForm()
-                    if createReviewForm.validate_on_submit:
+                    if createReviewForm.validate_on_submit():
                         review = createReviewForm.review.data
                         ratings = createReviewForm.ratings.data
                         createReviewForm.review.data = ""
@@ -200,7 +200,7 @@ class FlaskMongo:
             userRev = mongodb.ReviewDB.find_one({"EmailID": session.get("emailID")})
             if userRev:
                 updateForm = UpdateForm()
-                if updateForm.validate_on_submit:
+                if updateForm.validate_on_submit():
                     review = updateForm.review.data
                     ratings = updateForm.ratings.data
                     updateForm.review.data = ""
